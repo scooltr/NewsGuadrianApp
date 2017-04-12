@@ -189,5 +189,38 @@ public class NewsActivity extends AppCompatActivity implements LoaderCallbacks<L
         }
         return super.onOptionsItemSelected(item);
     }
+    
+// refresh the code after the settings were changed
+    @Override
+    protected void onResume() {
+        super.onResume();
 
+    //check if the application does have a connection to the internet
+    ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+    NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+    boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
+        //Making an empty ListView in case the information wasn't loaded yet
+
+        TextView textView = (TextView) findViewById(R.id.no_result);
+
+    //If application does have connection to internet make loader inflate News List
+
+        if (isConnected) {
+        // Initialize the loader. Pass in the int ID constant defined above and pass in null for
+        // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
+        // because this activity implements the LoaderCallbacks interface).
+
+        getLoaderManager().restartLoader(GUARDIAN_LOADER_ID, null, this);
+
+        /**
+         * If application HAVE NO connection to internet set background to Empty State View and change it's description to
+         * "R.string.no_network"
+         */
+    } else {
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.GONE);
+        textView.setText(R.string.no_network);
+    }
+}
 }
